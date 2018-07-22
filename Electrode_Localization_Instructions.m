@@ -11,18 +11,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set path to MRI and CT image (If any variables are not set, GUI
 % will allow for input)
-Subject_ID = 'AA0716';
+Subject_ID = 'Sbj1';
 cortical_disp = 'freesurfer';
-Subject_Path = '/Users/Witek/Documents/Data';
-Grid_Names = {'LG','LPST'};
-Grid_Lower = [1,81];
-Grid_Upper = [64,96];
-Strip_Names = {'LAPH','LPIH', 'LFP', 'LTP'};
-Strip_Lower = [65,69,73,97];
-Strip_Upper = [68,72,80,100];
-Depth_Names = {'LHIPP','LPH'};
-Depth_Lower = [101,109];
-Depth_Upper = [108,116];
+Subject_Path = 'C:\Users\Stathis\Desktop\Cingulate Project\Imaging';
+Grid_Names = {};
+Grid_Lower = [];
+Grid_Upper = [];
+Strip_Names = {};
+Strip_Lower = [];
+Strip_Upper = [];
+Depth_Names = {'RCG','LCG'};
+Depth_Lower = [1,5];
+Depth_Upper = [4,9];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -149,8 +149,12 @@ for i_grids = 1:length(Grid_Names)
     elecmatrix(Grid_Lower(i_grids):Grid_Upper(i_grids),:) = out_els;
 end
 
+if isempty(Grid_Names) && isempty(Strip_Names)
+    eleccell=num2cell(elecmatrix,2);
+end
+
 % Saving the electrode positions
-save(['./Electrode_Locations/electrodes_projected_',Subject_ID,'.mat'],'elecmatrix','eleccell');
+save(['./Electrode_Locations/electrodes_projected_',Subject_ID,'.mat'],'elecmatrix');
 
 %%
 figure;
@@ -186,7 +190,7 @@ switch cortical_disp
         cortex.tri=cortex.tri+1; % freesurfer starts at 0 for indexing
         
         % Reading in MRI parameters
-        f=MRIread('./mri/orig.mgz');
+        f = MRIread(fullfile(cd,'mri','orig.mgz'));
         
         % Translating into the appropriate space
         for k=1:size(cortex.vert,1)
@@ -208,7 +212,7 @@ end
 
 % Step 6
 % Add the electrodes onto the surface
-electrode_names = [Strip_Names,Grid_Names];
+electrode_names = [Strip_Names,Grid_Names,Depth_Names];
 
 % Allows the user to right click and display only selected electrodes
 hcmenu = uicontextmenu;
@@ -221,7 +225,7 @@ for i_plot = 1:numel(eleccell)
     % visible or not
     hcb{i_plot} = ['a=get(electrodeH(' num2str(i_plot) '),''visible''); if strcmp(a,''on'')==1, set(electrodeH(' num2str(i_plot) '),''visible'',''off''), else set(electrodeH(' num2str(i_plot) '),''visible'',''on''), end'];
     
-    cm_label{i_plot} = uimenu(hcmenu,'Label',electrode_names{i_plot},'Callback',hcb{i_plot});
+    %cm_label{i_plot} = uimenu(hcmenu,'Label',electrode_names{i_plot},'Callback',hcb{i_plot});
 end
 
 
