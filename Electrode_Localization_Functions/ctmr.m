@@ -674,11 +674,12 @@ function save_els_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 dataOut=handles.data.ctStruct;
-outputdir= spm_select(1,'dir','select output directory');
+%outputdir= spm_select(1,'dir','select output directory');
 %outputdir= './Electrode_locations/';
+outputdir = fullfile(cd,'Electrode_Locations');
 
 for filenummer=1:100
-    outputnaam=strcat([outputdir 'electrodes' int2str(filenummer) '.img']);
+    outputnaam=fullfile(outputdir,strcat(['electrodes' int2str(filenummer) '.img']));
     dataOut.fname=outputnaam;
 
     if ~exist(dataOut.fname)

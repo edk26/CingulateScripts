@@ -3,7 +3,8 @@
 % This program takes the output of Freesurfer and post-op CT scan to     %
 % perform electrode localization                                         %
 %                                                                        %
-% Michael Randazzo 8/6/14                                                %
+% Michael Randazzo 8/6/14   
+% Efstathios Kondylis 7/22/18
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
@@ -13,16 +14,16 @@
 % will allow for input)
 Subject_ID = 'Sbj1';
 cortical_disp = 'freesurfer';
-Subject_Path = 'C:\Users\Stathis\Desktop\Cingulate Project\Imaging';
+Subject_Path = '/Users/efstathioskondylis/Desktop/CingulateProject/Imaging/';
 Grid_Names = {};
 Grid_Lower = [];
 Grid_Upper = [];
 Strip_Names = {};
 Strip_Lower = [];
 Strip_Upper = [];
-Depth_Names = {'RCG','LCG'};
-Depth_Lower = [1,5];
-Depth_Upper = [4,9];
+Depth_Names = {'RCG','LCG1','LCG2'};
+Depth_Lower = [1,4];
+Depth_Upper = [5,8,9,12];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -73,8 +74,8 @@ end
 cd(fullfile(Subject_Path,[Subject_ID,'_FS']));
 
 % SPM Commands
-matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {[Subject_Path,'/',Subject_ID,'_FS/mri/T1.nii,1']};
-matlabbatch{1}.spm.spatial.coreg.estwrite.source = {[Subject_Path,'/',Subject_ID,'_FS/ct/ct_',Subject_ID,'.nii,1']};
+matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {[Subject_Path,Subject_ID,'_FS/mri/T1.nii,1']};
+matlabbatch{1}.spm.spatial.coreg.estwrite.source = {[Subject_Path,Subject_ID,'_FS/ct/ct_',Subject_ID,'.nii,1']};
 %matlabbatch{1}.spm.spatial.coreg.estwrite.source = fullfile(Subject_Path,[Subject_ID,'_FS'],'ct',['ct_',Subject_ID,'.nii,1']);
 matlabbatch{1}.spm.spatial.coreg.estwrite.other = {''};
 matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
@@ -111,7 +112,8 @@ sortElectrodes(Subject_ID);
 
 % Renaming the electrode locations .mat file
 % Renaming the electrode output
-movefile([Subject_Path,Subject_ID,'_FS/Electrode_Locations/electrodes_loc1.mat'],[Subject_Path,Subject_ID,'_FS/Electrode_Locations/electrodes_loc_',Subject_ID,'.mat']);
+movefile([Subject_Path,Subject_ID,'_FS/electrodes_loc1.mat'],...
+    [Subject_Path,Subject_ID,'_FS/Electrode_Locations/electrodes_loc_',Subject_ID,'.mat']);
 
 %%
 
@@ -122,8 +124,7 @@ movefile([Subject_Path,Subject_ID,'_FS/Electrode_Locations/electrodes_loc1.mat']
 get_mask_V3(Subject_ID,[Subject_Path,'/',Subject_ID,'_FS/mri/t1_class.nii'],'./Electrode_Locations/','l',13,0.3);
 get_mask_V3(Subject_ID,[Subject_Path,'/',Subject_ID,'_FS/mri/t1_class.nii'],'./Electrode_Locations/','r',13,0.3);
 
-pre_projected_electrode_loc = load(['./Electrode_Locations/electrodes_loc_',Subject_ID,'.mat']);
-
+pre_projected_electrode_loc = load(fullfile(cd,'Electrode_Locations','electrodes_loc1'));
 
 % Single array of electrodes (projected to the closest point of the
 % cortical surface)
@@ -150,11 +151,12 @@ for i_grids = 1:length(Grid_Names)
 end
 
 if isempty(Grid_Names) && isempty(Strip_Names)
+    elecmatrix = pre_projected_electrode_loc.elecmatrix;
     eleccell=num2cell(elecmatrix,2);
 end
 
 % Saving the electrode positions
-save(['./Electrode_Locations/electrodes_projected_',Subject_ID,'.mat'],'elecmatrix');
+save(fullfile(cd,'Electrode_Locations',['electrodes_projected_',Subject_ID,'.mat']),'eleccell','elecmatrix')
 
 %%
 figure;
@@ -219,7 +221,7 @@ hcmenu = uicontextmenu;
 
 % Loops through all of the electrodes and plots them
 for i_plot = 1:numel(eleccell)
-    electrodeH{i_plot} = el_add(eleccell{i_plot},'b',80); % Plots the electrodes
+    electrodeH{i_plot} = el_add(eleccell{i_plot},'b',15); % Plots the electrodes
     
     % Sets the handles for each of the electrodes and enables them to be
     % visible or not
@@ -241,5 +243,7 @@ switch labels_choice
             th(k_labels)=text(elecmatrix(k_labels,1)*1.01,elecmatrix(k_labels,2)*1.01,elecmatrix(k_labels,3)*1.01,num2str(k_labels),'FontSize',13,'HorizontalAlignment','center','VerticalAlignment','middle');
         end
 end
+
+cameratoolbar
 
  

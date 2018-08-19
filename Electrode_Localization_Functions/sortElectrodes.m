@@ -81,14 +81,15 @@ end
 
 %% save electrode matrix
 
-outputdir= spm_select(1,'dir','select directory to save locations matrix');
+%outputdir= spm_select(1,'dir','select directory to save locations matrix');
     
 for filenummer=1:100
-    outputnaam=strcat([outputdir 'electrodes_loc' int2str(filenummer) '.mat' ]);
+    outputnaam = fullfile(cd,'Electrode_Locations',['electrodes_loc',int2str(filenummer),'.mat']);
+    %outputnaam=strcat([outputdir 'electrodes_loc' int2str(filenummer) '.mat' ]);
     if ~exist(outputnaam,'file')>0
         disp(strcat(['saving ' outputnaam]));
         save(outputnaam,'elecmatrix');
-        break
+    break
     end
 end
 
