@@ -12,7 +12,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set path to MRI and CT image (If any variables are not set, GUI
 % will allow for input)
-Subject_ID = 'Sbj1';
+Subject_ID = 'Sbj2';
 cortical_disp = 'freesurfer';
 Subject_Path = '/Users/efstathioskondylis/Desktop/CingulateProject/Imaging/';
 Grid_Names = {};
@@ -21,9 +21,9 @@ Grid_Upper = [];
 Strip_Names = {};
 Strip_Lower = [];
 Strip_Upper = [];
-Depth_Names = {'RCG','LCG1','LCG2'};
-Depth_Lower = [1,4];
-Depth_Upper = [5,8,9,12];
+Depth_Names = {'R1','L2','LO1','LO2'};
+Depth_Lower = [1,5,10,15];
+Depth_Upper = [4,9,14,19];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

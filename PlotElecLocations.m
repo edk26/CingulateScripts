@@ -1,4 +1,4 @@
-%%
+%% Plot Brain
 
 % Generating individual hemispheres
 [cortex.vert_lh,cortex.tri_lh]= read_surf('./surf/lh.pial'); % Reading left side pial surface
@@ -48,7 +48,7 @@ vertnormals = get(Hp,'vertexnormals');
 axis off; axis equal
 
 %% Plot electrodes
-sbj = 'Sbj1';
+sbj = 'Sbj2';
 load(fullfile(cd,'Electrode_Locations', sprintf('electrodes_projected_%s',sbj)))
 
 for i_plot = 1:numel(eleccell)
@@ -60,3 +60,19 @@ for i_plot = 1:numel(eleccell)
     
     %cm_label{i_plot} = uimenu(hcmenu,'Label',electrode_names{i_plot},'Callback',hcb{i_plot});
 end
+
+cameratoolbar
+%% Adjust Parameters
+
+cortex_color = [.65,.65,.65];
+target_color = [1,.25,.25];
+target_alpha = 1.5;
+
+%Apply filter to cortex
+cortex1 = cortex;
+adata = ones(size(cortex1.vert,1),1)*1;
+adata(v_filt) = target_alpha;
+cdata = repmat(cortex_color,size(cortex1.vert,1),1);
+cdata(v_filt,:) = repmat(target_color,length(v_filt),1);
+
+set(Hp,'facevertexalphadata',adata,'facevertexcdata',cdata);
